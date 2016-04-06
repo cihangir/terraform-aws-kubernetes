@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kube-apiserver
+  namespace: kube-system
+spec:
+  hostNetwork: true
+  containers:
+  - name: kube-apiserver
+    image: gcr.io/google_containers/hyperkube:v${version}
+    ports:
+    - containerPort: 443
+      hostPort: 443
+      name: https
+    - containerPort: 8080
+      hostPort: 8080
+      name: local
