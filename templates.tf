@@ -3,9 +3,8 @@ resource "template_file" "kube-apiserver" {
 
   vars = {
     KUBERNETES_VERSION = "${var.kubernetes_version}"
-    ETCD_SERVERS = "${join(",", "${formatlist("http://%s:2379", module.kube_etcd.aws_instance.etcd.*.private_ip)}")}"
-    cluster_cidr = "${var.cluster_cidr}"
-    service_cluster_ip_range = "${var.service_cluster_ip_range}"
-    advertise_address = "172.21.1.129"
+    ETCD_SERVERS = "${join(",", "${formatlist("http://%s:2379", var.etcd_private_ips)}")}"
+    SERVICE_CLUSTER_IP_RANGE = "${var.service_cluster_ip_range}"
+    SELF_PRIVATE_IP = "172.21.1.129"
   }
 }
