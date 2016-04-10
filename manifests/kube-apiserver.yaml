@@ -11,13 +11,13 @@ spec:
     command:
     - /hyperkube
     - apiserver
-    - --bind-address=0.0.0.0
+#    - --bind-address=0.0.0.0
     - --insecure-bind-address=127.0.0.1
     - --etcd-servers=${ETCD_SERVERS}
     - --allow-privileged=true
     - --service-cluster-ip-range=${SERVICE_CLUSTER_IP_RANGE}
     - --secure-port=443
-    - --advertise-address=${SELF_PRIVATE_IP}
+#    - --advertise-address=${SELF_PRIVATE_IP} #The IP address on which to advertise the apiserver to members of the cluster. This address must be reachable by the rest of the cluster. If blank, the --bind-address will be used. If --bind-address is unspecified, the host's default interface will be used.
     - --admission-control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota
     - --tls-cert-file=/etc/kubernetes/ssl/apiserver.pem
     - --tls-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem

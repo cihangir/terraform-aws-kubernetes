@@ -1,16 +1,15 @@
 resource "template_file" "kube-apiserver" {
-  template = "manifests/kube-apiserver.yaml"
+  template = "file(manifests/kube-apiserver.yaml)"
 
   vars = {
     KUBERNETES_VERSION       = "${var.kubernetes_version}"
-    ETCD_SERVERS             = "${join(",", "${formatlist("http://%s:2379", var.etcd_private_ips)}")}"
+    ETCD_SERVERS             = "http://${module.aws_elb_etcd.aws_elb_elb_dns_name}:2379"
     SERVICE_CLUSTER_IP_RANGE = "${var.service_cluster_ip_range}"
-    SELF_PRIVATE_IP          = "192.168.127.131"
   }
 }
 
 resource "template_file" "kube-controller-manager" {
-  template = "manifests/kube-controller-manager.yaml"
+  template = "file(manifests/kube-controller-manager.yaml)"
 
   vars = {
     KUBERNETES_VERSION = "${var.kubernetes_version}"
@@ -19,19 +18,18 @@ resource "template_file" "kube-controller-manager" {
 }
 
 resource "template_file" "kube-podmaster" {
-  template = "manifests/kube-podmaster.yaml"
+  template = "file(manifests/kube-podmaster.yaml)"
 
   vars = {
-    ETCD_SERVERS    = "${join(",", "${formatlist("http://%s:2379", var.etcd_private_ips)}")}"
-    SELF_PRIVATE_IP = "192.168.127.131"
+    ETCD_SERVERS    = "http://${module.aws_elb_etcd.aws_elb_elb_dns_name}:2379"
   }
 }
 
 resource "template_file" "kube-proxy" {
-  template = "manifests/kube-proxy.yaml"
+  template = "file(manifests/kube-proxy.yaml)"
 
   vars = {
     KUBERNETES_VERSION       = "${var.kubernetes_version}"
-    KUBE_API_SERVER_ENDPOINT = "${var.kube_api_server_endpoint}"
+    KUBE_API_SERVER_ENDPOINT = "${module.aws_elb_kube_masters.aws_elb_elb_dns_name}"
   }
 }
