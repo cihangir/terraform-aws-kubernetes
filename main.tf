@@ -93,10 +93,15 @@ module "aws_asg_etcd" {
 #################### KUBERNETES MASTERS #######################
 ###############################################################
 module "aws_elb_kube_masters" {
-  source                = "github.com/cihangir/terraform-aws//elb"
-  name                  = "${var.name}"
-  aws_vpc_id            = "${module.aws_vpc.aws_vpc_vpc_id}"
-  aws_subnet_subnet_ids = "${module.aws_vpc.aws_subnet_subnet_ids}"
+  source                      = "github.com/cihangir/terraform-aws//elb"
+  name                        = "${var.name}"
+  aws_vpc_id                  = "${module.aws_vpc.aws_vpc_vpc_id}"
+  aws_subnet_subnet_ids       = "${module.aws_vpc.aws_subnet_subnet_ids}"
+  aws_elb_instance_port       = 8080
+  aws_elb_instance_protocol   = "tcp"
+  aws_elb_port                = 8080
+  aws_elb_protocol            = "tcp"
+  aws_elb_health_check_target = "HTTP:8080/healthz"
 }
 
 module "aws_asg_kube_masters" {
