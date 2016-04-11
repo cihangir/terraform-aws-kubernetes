@@ -52,29 +52,29 @@ write_files:
   - path: "/etc/kubernetes/manifests/kube-apiserver.yaml"
     permissions: "0644"
     content: |
-      ${KUBE_APISERVER_TEMPLATE_CONTENT}
+${KUBE_APISERVER_TEMPLATE_CONTENT}
 
   - path: "/etc/kubernetes/manifests/kube-controller-manager.yaml"
     permissions: "0644"
     content: |
-      ${KUBE_CONTROLLER_MANAGER_TEMPLATE_CONTENT}
+${KUBE_CONTROLLER_MANAGER_TEMPLATE_CONTENT}
 
   - path: "/etc/kubernetes/manifests/kube-podmaster.yaml"
     permissions: "0644"
     content: |
-      ${KUBE_PODMASTER_TEMPLATE_CONTENT}
+${KUBE_PODMASTER_TEMPLATE_CONTENT}
 
   - path: "/etc/kubernetes/manifests/kube-proxy.yaml"
     permissions: "0644"
     content: |
-      ${KUBE_PROXY_TEMPLATE_CONTENT}
+${KUBE_PROXY_TEMPLATE_CONTENT}
 
   - path: "/etc/kubernetes/manifests/kube-scheduler.yaml"
     permissions: "0644"
     content: |
-      ${KUBE_SCHEDULER_TEMPLATE_CONTENT}
+${KUBE_SCHEDULER_TEMPLATE_CONTENT}
 
   - path: "/etc/kubernetes/manifests/kube-scheduler.yaml"
     permissions: "0644"
     content: |
-      ${KUBE_SCHEDULER_TEMPLATE_CONTENT}
+${KUBE_SCHEDULER_TEMPLATE_CONTENT}
