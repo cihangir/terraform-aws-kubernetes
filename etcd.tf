@@ -2,24 +2,23 @@
 ######################## ETCD CLUSTER #########################
 ###############################################################
 module "aws_elb_etcd" {
-  source                      = "github.com/cihangir/terraform-aws//elb"
-  name                        = "${var.name}-etcd"
-  aws_vpc_id                  = "${module.aws_vpc.aws_vpc_vpc_id}"
-  aws_subnet_subnet_ids       = "${module.aws_vpc.aws_subnet_subnet_ids}"
+  source                = "github.com/cihangir/terraform-aws//elb"
+  name                  = "${var.name}-etcd"
+  aws_vpc_id            = "${module.aws_vpc.aws_vpc_vpc_id}"
+  aws_subnet_subnet_ids = "${module.aws_vpc.aws_subnet_subnet_ids}"
 
-  aws_elb_instance_port       = 2379
-  aws_elb_instance_protocol   = "tcp"
-  aws_elb_port                = 2379
-  aws_elb_protocol            = "tcp"
+  aws_elb_instance_port     = 2379
+  aws_elb_instance_protocol = "tcp"
+  aws_elb_port              = 2379
+  aws_elb_protocol          = "tcp"
 
-  aws_elb_instance_port_2       = 2380
-  aws_elb_instance_protocol_2   = "tcp"
-  aws_elb_port_2                = 2380
-  aws_elb_protocol_2            = "tcp"
+  aws_elb_instance_port_2     = 2380
+  aws_elb_instance_protocol_2 = "tcp"
+  aws_elb_port_2              = 2380
+  aws_elb_protocol_2          = "tcp"
 
   aws_elb_health_check_target = "HTTP:2379/health"
 }
-
 
 module "aws_asg_etcd" {
   source                = "github.com/cihangir/terraform-aws//asg"
