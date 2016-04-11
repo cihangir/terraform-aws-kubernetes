@@ -11,8 +11,7 @@ spec:
     command:
     - /hyperkube
     - controller-manager
-    - --master=http://127.0.0.1:8080
-    - --cluster-name=${CLUSTER_NAME}
+    - --master=${KUBE_API_SERVER_ENDPOINT}
     - --service-account-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem
     - --root-ca-file=/etc/kubernetes/ssl/ca.pem
     - --cloud-provider=aws
