@@ -86,7 +86,7 @@ module "aws_asg_etcd" {
   key_name              = "${module.aws_vpc.aws_key_name}"
   load_balancer_names   = "${module.aws_elb_etcd.aws_elb_elb_name}"
   instance_type         = "${var.instance_type_master}"
-  ami_id                = "ami-c40784a8"
+  ami_id                = "ami-d75bd4bb"
 resource "template_file" "create_etcd_discovery_url" {
   template = "${file("/dev/null")}"
 
