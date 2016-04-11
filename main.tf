@@ -87,6 +87,28 @@ module "aws_asg_etcd" {
   load_balancer_names   = "${module.aws_elb_etcd.aws_elb_elb_name}"
   instance_type         = "${var.instance_type_master}"
   ami_id                = "ami-c40784a8"
+resource "template_file" "create_etcd_discovery_url" {
+  template = "${file("/dev/null")}"
+
+  provisioner "local-exec" {
+    command = "curl https://discovery.etcd.io/new?size=${var.master_desired_cluster_size} > ${var.etcd_discovery_url_file}"
+  }
+}
+
+resource "template_file" "read_etcd_discovery_url_file" {
+  depends_on = ["template_file.create_etcd_discovery_url"]
+
+  template = "${file(var.etcd_discovery_url_file)}"
+}
+
+resource "template_file" "coreos_etcd_cloud_init" {
+  depends_on = ["template_file.read_etcd_discovery_url_file"]
+
+  template = "${file("coreos_etcd_cloud_init.yaml.tpl")}"
+
+  vars {
+    discovery_url = "${template_file.read_etcd_discovery_url_file.rendered}"
+  }
 }
 
 ###############################################################
@@ -114,14 +136,6 @@ module "aws_asg_kube_masters" {
   ami_id                = "ami-c40784a8"
   desired_cluster_size  = "${var.master_desired_cluster_size}"
 }
-
-resource "template_file" "etcd_discovery_url" {
-  template = "file(/dev/null)"
-  provisioner "local-exec" {
-    command = "curl https://discovery.etcd.io/new?size=${var.master_desired_cluster_size} > ${var.etcd_discovery_url_file}"
-  }
-}
-
 
 ###############################################################
 ##################### KUBERNETES NODES ########################
