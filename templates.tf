@@ -55,7 +55,7 @@ resource "template_file" "kube_master_cloud_init_file" {
   template = "${file("coreos_kube_masters_cloud_init.yaml.tpl")}"
 
   vars = {
-    ETCD_ELB_DNS_NAME = "${module.aws_elb_kube_masters.aws_elb_elb_dns_name}"
+    ETCD_ELB_DNS_NAME = "${module.aws_elb_etcd.aws_elb_elb_dns_name}"
 
     KUBE_APISERVER_TEMPLATE_CONTENT          = "${template_file.kube-apiserver.rendered}"
     KUBE_CONTROLLER_MANAGER_TEMPLATE_CONTENT = "${template_file.kube-controller-manager.rendered}"
