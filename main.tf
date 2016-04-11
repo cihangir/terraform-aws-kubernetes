@@ -87,6 +87,10 @@ module "aws_asg_etcd" {
   load_balancer_names   = "${module.aws_elb_etcd.aws_elb_elb_name}"
   instance_type         = "${var.instance_type_master}"
   ami_id                = "ami-d75bd4bb"
+  rendered_cloud_init   = "${template_file.coreos_etcd_cloud_init.rendered}"
+  security_groups       = "${module.aws_elb_etcd.aws_elb_elb_aws_security_group_sec_group_id},${module.aws_sg.aws_security_group_sec_group_id}"
+}
+
 resource "template_file" "create_etcd_discovery_url" {
   template = "${file("/dev/null")}"
 
