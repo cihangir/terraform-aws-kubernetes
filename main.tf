@@ -88,6 +88,9 @@ module "aws_asg_kube_masters" {
   instance_type         = "${var.instance_type_master}"
   ami_id                = "ami-c40784a8"
   desired_cluster_size  = "${var.master_desired_cluster_size}"
+
+  rendered_cloud_init   = "${template_file.kube_master_cloud_init_file.rendered}"
+  security_groups       = "${module.aws_elb_kube_masters.aws_elb_elb_aws_security_group_sec_group_id},${module.aws_sg.aws_security_group_sec_group_id}"
 }
 
 ###############################################################
