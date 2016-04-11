@@ -55,3 +55,15 @@ resource "template_file" "coreos_etcd_cloud_init" {
     discovery_url = "${template_file.read_etcd_discovery_url_file.rendered}"
   }
 }
+
+
+
+# Allow all incoming communication to ETCD elb from the VPC
+resource "aws_security_group_rule" "allow_all_ingress_within_vpc_to_etcd_elb" {
+  type                     = "ingress"
+  from_port                = 0
+  to_port                  = 0
+  protocol                 = "-1"
+  source_security_group_id = "${module.aws_sg.aws_security_group_sec_group_id}}"
+  security_group_id        = "${module.aws_elb_etcd.aws_elb_elb_aws_security_group_sec_group_id}"
+}
