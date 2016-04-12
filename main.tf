@@ -36,7 +36,11 @@ variable "instance_type_etcd" {
 }
 
 variable "service_cluster_ip_range" {
-  default = "10.0.0.0/24"
+  default = "10.3.0.1/24"
+}
+
+variable "cluster_dns_endpoint" {
+  default = "10.3.0.1"
 }
 
 variable "kubernetes_version" {
@@ -45,6 +49,10 @@ variable "kubernetes_version" {
 
 variable "cluster_name" {
   default = "kubernetes_cluster"
+}
+
+variable "cluster_domain" {
+  default = "cluster.local"
 }
 
 ###############################################################
