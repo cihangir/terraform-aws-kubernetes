@@ -51,6 +51,25 @@ resource "template_file" "kube-kubelet-node-service" {
   template = "${file("units/kube-kubelet-node.service.tpl")}"
 }
 
+resource "template_file" "kubernetes-env-file" {
+  template = "${file("units/kubernetes.env.tpl")}"
+
+  vars = {
+    KUBERNETES_VERSION       = "${var.kubernetes_version}"
+    KUBE_API_SERVER_ENDPOINT = "http://${module.aws_elb_kube_masters.aws_elb_elb_dns_name}:8080"
+    CLUSTER_DNS_ENDPOINT     = "${var.cluster_dns_endpoint}"
+    CLUSTER_DOMAIN           = "${var.cluster_domain}"
+  }
+}
+
+resource "template_file" "instance-env-file" {
+  template = "${file("units/instance.env.tpl")}"
+
+  vars = {
+    INSTANCE_ROLE = "master"
+  }
+}
+
 resource "template_file" "kube_master_cloud_init_file" {
   template = "${file("coreos_kube_masters_cloud_init.yaml.tpl")}"
 
@@ -64,5 +83,8 @@ resource "template_file" "kube_master_cloud_init_file" {
     KUBE_SCHEDULER_TEMPLATE_CONTENT          = "${template_file.kube-scheduler.rendered}"
 
     KUBE_KUBELET_MASTER_TEMPLATE_CONTENT = "${template_file.kube-kubelet-master-service.rendered}"
+
+    KUBERNETES_ENV_FILE_TEMPLATE_CONTENT = "${template_file.kubernetes-env-file.rendered}"
+    INSTANCE_ENV_FILE_TEMPLATE_CONTENT = "${template_file.instance-env-file.rendered}"
   }
 }
