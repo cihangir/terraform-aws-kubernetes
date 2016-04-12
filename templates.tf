@@ -108,3 +108,17 @@ resource "template_file" "kube_master_cloud_init_file" {
     KUBE_KUBELET_MASTER_TEMPLATE_CONTENT     = "${template_file.kube-kubelet-master-service.rendered}"
   }
 }
+
+
+resource "template_cloudinit_config" "kube_master" {
+  gzip          = false
+  base64_encode = false
+
+  part {
+    content      = "${template_file.kube_master_cloud_init_file.rendered}"
+  }
+
+  provisioner "local-exec" {
+    command = "echo ${template_file.kube_master_cloud_init_file.rendered} > cloudinit.tmp"
+  }
+}
