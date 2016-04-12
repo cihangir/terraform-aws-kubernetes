@@ -88,3 +88,13 @@ ${KUBERNETES_ENV_FILE_TEMPLATE_CONTENT}
     permissions: "0644"
     content: |
 ${INSTANCE_ENV_FILE_TEMPLATE_CONTENT}
+
+  - path: "/etc/kubernetes/addons/skydns-rc.yaml"
+    permissions: "0644"
+    content: |
+${KUBE_SKYDNS_RC_TEMPLATE_CONTENT}
+
+  - path: "/etc/kubernetes/addons/skydns-svc.yaml"
+    permissions: "0644"
+    content: |
+${KUBE_SKYDNS_SVC_TEMPLATE_CONTENT}
