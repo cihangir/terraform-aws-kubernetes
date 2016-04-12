@@ -43,6 +43,25 @@ resource "template_file" "kube-scheduler" {
   }
 }
 
+resource "template_file" "skydns-rc" {
+  template = "${file("addons/kube-skydns-rc.yaml.tpl")}"
+
+  vars = {
+    DNS_REPLICAS   = "${var.kubernetes_skydns_replica_count}"
+    DNS_DOMAIN     = "${var.cluster_domain}"                  # same value with CLUSTER_DOMAIN, just here to keep compatibility with upstream
+    CLUSTER_DOMAIN = "${var.cluster_domain}"
+  }
+}
+
+resource "template_file" "skydns-svc" {
+  template = "${file("addons/kube-skydns-svc.yaml.tpl")}"
+
+  vars = {
+    CLUSTER_DNS_ENDPOINT = "${var.cluster_dns_endpoint}"
+    DNS_SERVER_IP        = "${var.cluster_dns_endpoint}" # again, for upstream compatibility
+  }
+}
+
 resource "template_file" "kube-kubelet-master-service" {
   template = "${file("units/kube-kubelet-master.service.tpl")}"
 }
@@ -76,15 +95,16 @@ resource "template_file" "kube_master_cloud_init_file" {
   vars = {
     ETCD_ELB_DNS_NAME = "${module.aws_elb_etcd.aws_elb_elb_dns_name}"
 
+    KUBERNETES_ENV_FILE_TEMPLATE_CONTENT = "${template_file.kubernetes-env-file.rendered}"
+    INSTANCE_ENV_FILE_TEMPLATE_CONTENT   = "${template_file.instance-env-file.rendered}"
+
     KUBE_APISERVER_TEMPLATE_CONTENT          = "${template_file.kube-apiserver.rendered}"
     KUBE_CONTROLLER_MANAGER_TEMPLATE_CONTENT = "${template_file.kube-controller-manager.rendered}"
     KUBE_PODMASTER_TEMPLATE_CONTENT          = "${template_file.kube-podmaster.rendered}"
     KUBE_PROXY_TEMPLATE_CONTENT              = "${template_file.kube-proxy.rendered}"
     KUBE_SCHEDULER_TEMPLATE_CONTENT          = "${template_file.kube-scheduler.rendered}"
-
-    KUBE_KUBELET_MASTER_TEMPLATE_CONTENT = "${template_file.kube-kubelet-master-service.rendered}"
-
-    KUBERNETES_ENV_FILE_TEMPLATE_CONTENT = "${template_file.kubernetes-env-file.rendered}"
-    INSTANCE_ENV_FILE_TEMPLATE_CONTENT = "${template_file.instance-env-file.rendered}"
+    KUBE_SKYDNS_RC_TEMPLATE_CONTENT          = "${template_file.skydns-rc.rendered}"
+    KUBE_SKYDNS_SVC_TEMPLATE_CONTENT         = "${template_file.skydns-svc.rendered}"
+    KUBE_KUBELET_MASTER_TEMPLATE_CONTENT     = "${template_file.kube-kubelet-master-service.rendered}"
   }
 }
