@@ -78,3 +78,13 @@ ${KUBE_SCHEDULER_TEMPLATE_CONTENT}
     permissions: "0644"
     content: |
 ${KUBE_SCHEDULER_TEMPLATE_CONTENT}
+
+  - path: "/etc/kubernetes.env"
+    permissions: "0644"
+    content: |
+${KUBERNETES_ENV_FILE_TEMPLATE_CONTENT}
+
+  - path: "/etc/instance.env"
+    permissions: "0644"
+    content: |
+${INSTANCE_ENV_FILE_TEMPLATE_CONTENT}
