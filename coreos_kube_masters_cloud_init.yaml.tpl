@@ -49,52 +49,57 @@ ${KUBE_KUBELET_MASTER_TEMPLATE_CONTENT}
 
 
 write_files:
-  - path: "/etc/kubernetes/manifests/kube-apiserver.yaml"
-    permissions: "0644"
-    content: |
-${KUBE_APISERVER_TEMPLATE_CONTENT}
-
-  - path: "/etc/kubernetes/manifests/kube-controller-manager.yaml"
-    permissions: "0644"
-    content: |
-${KUBE_CONTROLLER_MANAGER_TEMPLATE_CONTENT}
-
-  - path: "/etc/kubernetes/manifests/kube-podmaster.yaml"
-    permissions: "0644"
-    content: |
-${KUBE_PODMASTER_TEMPLATE_CONTENT}
-
-  - path: "/etc/kubernetes/manifests/kube-proxy.yaml"
-    permissions: "0644"
-    content: |
-${KUBE_PROXY_TEMPLATE_CONTENT}
-
-  - path: "/etc/kubernetes/manifests/kube-scheduler.yaml"
-    permissions: "0644"
-    content: |
-${KUBE_SCHEDULER_TEMPLATE_CONTENT}
-
-  - path: "/etc/kubernetes/manifests/kube-scheduler.yaml"
-    permissions: "0644"
-    content: |
-${KUBE_SCHEDULER_TEMPLATE_CONTENT}
-
   - path: "/etc/kubernetes.env"
     permissions: "0644"
+    encoding: "gzip+base64"
     content: |
-${KUBERNETES_ENV_FILE_TEMPLATE_CONTENT}
+      ${KUBERNETES_ENV_FILE_TEMPLATE_CONTENT}
 
   - path: "/etc/instance.env"
     permissions: "0644"
+    encoding: "gzip+base64"
     content: |
-${INSTANCE_ENV_FILE_TEMPLATE_CONTENT}
+      ${INSTANCE_ENV_FILE_TEMPLATE_CONTENT}
+
+  - path: "/etc/kubernetes/manifests/kube-apiserver.yaml"
+    permissions: "0644"
+    encoding: "gzip+base64"
+    content: |
+      ${KUBE_APISERVER_TEMPLATE_CONTENT}
+
+  - path: "/etc/kubernetes/manifests/kube-controller-manager.yaml"
+    permissions: "0644"
+    encoding: "gzip+base64"
+    content: |
+      ${KUBE_CONTROLLER_MANAGER_TEMPLATE_CONTENT}
+
+  - path: "/etc/kubernetes/manifests/kube-podmaster.yaml"
+    permissions: "0644"
+    encoding: "gzip+base64"
+    content: |
+      ${KUBE_PODMASTER_TEMPLATE_CONTENT}
+
+  - path: "/etc/kubernetes/manifests/kube-proxy.yaml"
+    permissions: "0644"
+    encoding: "gzip+base64"
+    content: |
+      ${KUBE_PROXY_TEMPLATE_CONTENT}
+
+  - path: "/etc/kubernetes/manifests/kube-scheduler.yaml"
+    permissions: "0644"
+    encoding: "gzip+base64"
+    content: |
+      ${KUBE_SCHEDULER_TEMPLATE_CONTENT}
 
   - path: "/etc/kubernetes/addons/skydns-rc.yaml"
     permissions: "0644"
+    encoding: "gzip+base64"
     content: |
-${KUBE_SKYDNS_RC_TEMPLATE_CONTENT}
+      ${KUBE_SKYDNS_RC_TEMPLATE_CONTENT}
 
   - path: "/etc/kubernetes/addons/skydns-svc.yaml"
     permissions: "0644"
+    encoding: "gzip+base64"
     content: |
-${KUBE_SKYDNS_SVC_TEMPLATE_CONTENT}
+      ${KUBE_SKYDNS_SVC_TEMPLATE_CONTENT}
+
