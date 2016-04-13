@@ -55,6 +55,10 @@ variable "cluster_domain" {
   default = "cluster.local"
 }
 
+variable "kubernetes_skydns_replica_count" {
+  default = "1"
+}
+
 ###############################################################
 ############## master vpc to create resources in ##############
 ###############################################################
