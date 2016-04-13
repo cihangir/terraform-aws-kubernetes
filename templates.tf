@@ -105,6 +105,7 @@ resource "template_file" "kube_master_cloud_init_file" {
   template = "${file("cloud_init_kube_masters_coreos.yaml")}"
 
   vars = {
+    KUBERNETES_VERSION = "${var.kubernetes_version}"
     ETCD_ELB_DNS_NAME = "${module.aws_elb_etcd.aws_elb_elb_dns_name}"
 
     KUBE_KUBELET_MASTER_TEMPLATE_CONTENT = "${template_file.kube-kubelet-master-service.rendered}"
