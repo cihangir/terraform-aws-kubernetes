@@ -2,7 +2,7 @@
 # Manifest Templates
 #
 resource "template_file" "kube-apiserver" {
-  template = "${file("manifests/kube-apiserver.yaml.tpl")}"
+  template = "${file("manifests/kube-apiserver.yaml")}"
 
   vars = {
     KUBERNETES_VERSION       = "${var.kubernetes_version}"
@@ -12,7 +12,7 @@ resource "template_file" "kube-apiserver" {
 }
 
 resource "template_file" "kube-controller-manager" {
-  template = "${file("manifests/kube-controller-manager.yaml.tpl")}"
+  template = "${file("manifests/kube-controller-manager.yaml")}"
 
   vars = {
     KUBERNETES_VERSION       = "${var.kubernetes_version}"
@@ -21,7 +21,7 @@ resource "template_file" "kube-controller-manager" {
 }
 
 resource "template_file" "kube-podmaster" {
-  template = "${file("manifests/kube-podmaster.yaml.tpl")}"
+  template = "${file("manifests/kube-podmaster.yaml")}"
 
   vars = {
     ETCD_SERVERS = "http://${module.aws_elb_etcd.aws_elb_elb_dns_name}:2379"
@@ -29,7 +29,7 @@ resource "template_file" "kube-podmaster" {
 }
 
 resource "template_file" "kube-proxy" {
-  template = "${file("manifests/kube-proxy.yaml.tpl")}"
+  template = "${file("manifests/kube-proxy.yaml")}"
 
   vars = {
     KUBERNETES_VERSION       = "${var.kubernetes_version}"
@@ -38,7 +38,7 @@ resource "template_file" "kube-proxy" {
 }
 
 resource "template_file" "kube-scheduler" {
-  template = "${file("manifests/kube-scheduler.yaml.tpl")}"
+  template = "${file("manifests/kube-scheduler.yaml")}"
 
   vars = {
     KUBERNETES_VERSION       = "${var.kubernetes_version}"
@@ -50,7 +50,7 @@ resource "template_file" "kube-scheduler" {
 # Add-on Templates
 #
 resource "template_file" "skydns-rc" {
-  template = "${file("addons/kube-skydns-rc.yaml.tpl")}"
+  template = "${file("addons/kube-skydns-rc.yaml")}"
 
   vars = {
     DNS_REPLICAS   = "${var.kubernetes_skydns_replica_count}"
@@ -60,7 +60,7 @@ resource "template_file" "skydns-rc" {
 }
 
 resource "template_file" "skydns-svc" {
-  template = "${file("addons/kube-skydns-svc.yaml.tpl")}"
+  template = "${file("addons/kube-skydns-svc.yaml")}"
 
   vars = {
     CLUSTER_DNS_ENDPOINT = "${var.cluster_dns_endpoint}"
@@ -102,7 +102,7 @@ resource "template_file" "kubernetes-env-file" {
 # Main Templates
 #
 resource "template_file" "kube_master_cloud_init_file" {
-  template = "${file("coreos_kube_masters_cloud_init.yaml.tpl")}"
+  template = "${file("cloud_init_kube_masters_coreos.yaml")}"
 
   vars = {
     ETCD_ELB_DNS_NAME = "${module.aws_elb_etcd.aws_elb_elb_dns_name}"
