@@ -1,3 +1,6 @@
+#
+# Manifest Templates
+#
 resource "template_file" "kube-apiserver" {
   template = "${file("manifests/kube-apiserver.yaml.tpl")}"
 
@@ -43,6 +46,9 @@ resource "template_file" "kube-scheduler" {
   }
 }
 
+#
+# Add-on Templates
+#
 resource "template_file" "skydns-rc" {
   template = "${file("addons/kube-skydns-rc.yaml.tpl")}"
 
@@ -62,12 +68,23 @@ resource "template_file" "skydns-svc" {
   }
 }
 
+#
+# Unit Templates
+#
 resource "template_file" "kube-kubelet-master-service" {
   template = "${file("units/kube-kubelet-master.service.tpl")}"
 }
 
 resource "template_file" "kube-kubelet-node-service" {
   template = "${file("units/kube-kubelet-node.service.tpl")}"
+}
+
+resource "template_file" "instance-env-file" {
+  template = "${file("units/instance.env.tpl")}"
+
+  vars = {
+    INSTANCE_ROLE = "master"
+  }
 }
 
 resource "template_file" "kubernetes-env-file" {
@@ -81,44 +98,26 @@ resource "template_file" "kubernetes-env-file" {
   }
 }
 
-resource "template_file" "instance-env-file" {
-  template = "${file("units/instance.env.tpl")}"
-
-  vars = {
-    INSTANCE_ROLE = "master"
-  }
-}
-
+#
+# Main Templates
+#
 resource "template_file" "kube_master_cloud_init_file" {
   template = "${file("coreos_kube_masters_cloud_init.yaml.tpl")}"
 
   vars = {
     ETCD_ELB_DNS_NAME = "${module.aws_elb_etcd.aws_elb_elb_dns_name}"
 
-    KUBERNETES_ENV_FILE_TEMPLATE_CONTENT = "${template_file.kubernetes-env-file.rendered}"
-    INSTANCE_ENV_FILE_TEMPLATE_CONTENT   = "${template_file.instance-env-file.rendered}"
+    KUBE_KUBELET_MASTER_TEMPLATE_CONTENT = "${template_file.kube-kubelet-master-service.rendered}"
 
-    KUBE_APISERVER_TEMPLATE_CONTENT          = "${template_file.kube-apiserver.rendered}"
-    KUBE_CONTROLLER_MANAGER_TEMPLATE_CONTENT = "${template_file.kube-controller-manager.rendered}"
-    KUBE_PODMASTER_TEMPLATE_CONTENT          = "${template_file.kube-podmaster.rendered}"
-    KUBE_PROXY_TEMPLATE_CONTENT              = "${template_file.kube-proxy.rendered}"
-    KUBE_SCHEDULER_TEMPLATE_CONTENT          = "${template_file.kube-scheduler.rendered}"
-    KUBE_SKYDNS_RC_TEMPLATE_CONTENT          = "${template_file.skydns-rc.rendered}"
-    KUBE_SKYDNS_SVC_TEMPLATE_CONTENT         = "${template_file.skydns-svc.rendered}"
-    KUBE_KUBELET_MASTER_TEMPLATE_CONTENT     = "${template_file.kube-kubelet-master-service.rendered}"
-  }
-}
+    KUBE_APISERVER_TEMPLATE_CONTENT          = "${base64encode(gzip(template_file.kube-apiserver.rendered))}"
+    KUBE_CONTROLLER_MANAGER_TEMPLATE_CONTENT = "${base64encode(gzip(template_file.kube-controller-manager.rendered))}"
+    KUBE_PODMASTER_TEMPLATE_CONTENT          = "${base64encode(gzip(template_file.kube-podmaster.rendered))}"
+    KUBE_PROXY_TEMPLATE_CONTENT              = "${base64encode(gzip(template_file.kube-proxy.rendered))}"
+    KUBE_SCHEDULER_TEMPLATE_CONTENT          = "${base64encode(gzip(template_file.kube-scheduler.rendered))}"
+    KUBE_SKYDNS_RC_TEMPLATE_CONTENT          = "${base64encode(gzip(template_file.skydns-rc.rendered))}"
+    KUBE_SKYDNS_SVC_TEMPLATE_CONTENT         = "${base64encode(gzip(template_file.skydns-svc.rendered))}"
 
-
-resource "template_cloudinit_config" "kube_master" {
-  gzip          = false
-  base64_encode = false
-
-  part {
-    content      = "${template_file.kube_master_cloud_init_file.rendered}"
-  }
-
-  provisioner "local-exec" {
-    command = "echo ${template_file.kube_master_cloud_init_file.rendered} > cloudinit.tmp"
+    KUBERNETES_ENV_FILE_TEMPLATE_CONTENT = "${base64encode(gzip(template_file.kubernetes-env-file.rendered))}"
+    INSTANCE_ENV_FILE_TEMPLATE_CONTENT   = "${base64encode(gzip(template_file.instance-env-file.rendered))}"
   }
 }
