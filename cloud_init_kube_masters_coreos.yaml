@@ -32,6 +32,18 @@ coreos:
             Requires=flanneld.service
             After=flanneld.service
 
+    - name: install-kube.service
+      command: start
+      content: |
+        [Unit]
+        Description=Install Kubelet
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/usr/bin/bash -c '/usr/bin/mkdir -p /opt/bin && \
+                                    /usr/bin/wget -N -O /opt/bin/kubelet https://storage.googleapis.com/kubernetes-release/release/v${KUBERNETES_VERSION}/bin/linux/amd64/kubelet && \'
+                                    /usr/bin/wget -N -O /opt/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v${KUBERNETES_VERSION}/bin/linux/amd64/kubectl'
+
     - name: kubelet.service
       command: start
       content: |
