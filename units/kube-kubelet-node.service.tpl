@@ -27,11 +27,6 @@
         LimitNPROC=1048576
         LimitCORE=infinity
 
-        # Specify the maximum number of tasks that may be created in the unit. This
-        # ensures that the number of tasks accounted for the unit stays below a specific
-        # limit. If assigned the special value "infinity", no tasks limit is applied.
-        TasksMax=infinity
-
         # Takes one of no, on-success, on-failure, on-abnormal, on-watchdog, on-abort,
         # or always. If set to no (the default), the service will not be restarted. If
         # set to on-success, it will be restarted only when the service process exits
