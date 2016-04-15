@@ -118,7 +118,7 @@ resource "template_file" "kube_master_cloud_init_file" {
     KUBE_SKYDNS_RC_TEMPLATE_CONTENT          = "${base64encode(gzip(template_file.skydns-rc.rendered))}"
     KUBE_SKYDNS_SVC_TEMPLATE_CONTENT         = "${base64encode(gzip(template_file.skydns-svc.rendered))}"
 
-    KUBERNETES_ENV_FILE_TEMPLATE_CONTENT = "${base64encode(gzip(template_file.kubernetes-env-file.rendered))}"
-    INSTANCE_ENV_FILE_TEMPLATE_CONTENT   = "${base64encode(gzip(template_file.instance-env-file.rendered))}"
+    KUBERNETES_ENV_FILE_TEMPLATE_CONTENT = "${template_file.kubernetes-env-file.rendered}"
+    INSTANCE_ENV_FILE_TEMPLATE_CONTENT   = "${template_file.instance-env-file.rendered}"
   }
 }

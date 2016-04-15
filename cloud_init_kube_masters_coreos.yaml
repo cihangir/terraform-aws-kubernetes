@@ -63,12 +63,10 @@ ${KUBE_KUBELET_MASTER_TEMPLATE_CONTENT}
 write_files:
   - path: "/etc/kubernetes.env"
     permissions: "0644"
-    encoding: "gzip+base64"
     content: |
       ${KUBERNETES_ENV_FILE_TEMPLATE_CONTENT}
 
   - path: "/etc/instance.env"
-    permissions: "0644"
     encoding: "gzip+base64"
     content: |
       ${INSTANCE_ENV_FILE_TEMPLATE_CONTENT}
