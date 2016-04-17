@@ -61,6 +61,11 @@ ${KUBE_KUBELET_MASTER_TEMPLATE_CONTENT}
 
 
 write_files:
+  - path: "/etc/private_ipv4"
+    permissions: "0644"
+    content: |
+      $private_ipv4
+
   - path: "/etc/kubernetes.env"
     permissions: "0644"
     content: |
@@ -112,4 +117,3 @@ write_files:
     encoding: "gzip+base64"
     content: |
       ${KUBE_SKYDNS_SVC_TEMPLATE_CONTENT}
-
