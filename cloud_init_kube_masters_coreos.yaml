@@ -44,6 +44,16 @@ coreos:
                                     /usr/bin/wget -N -O /opt/bin/kubelet https://storage.googleapis.com/kubernetes-release/release/v${KUBERNETES_VERSION}/bin/linux/amd64/kubelet && \
                                     /usr/bin/wget -N -O /opt/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v${KUBERNETES_VERSION}/bin/linux/amd64/kubectl'
 
+    - name: replace_private_ipv4.service
+      command: start
+      content: |
+        [Unit]
+        Description=Replace private_ipv4
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/etc/private_ipv4_replacer.sh
+
     - name: kubelet.service
       command: start
       content: |
@@ -119,3 +129,29 @@ write_files:
     encoding: "gzip+base64"
     content: |
       ${KUBE_SKYDNS_SVC_TEMPLATE_CONTENT}
+
+  - path: "/etc/private_ipv4_replacer.sh"
+    permissions: "0755"
+    content: |
+      #! /bin/bash
+      set -o errexit
+
+      files=(
+      	/etc/kubernetes.env
+      	/etc/instance.env
+      	/etc/kubernetes/manifests/kube-apiserver.yaml
+      	/etc/kubernetes/manifests/kube-controller-manager.yaml
+      	/etc/kubernetes/manifests/kube-podmaster.yaml
+      	/etc/kubernetes/manifests/kube-proxy.yaml
+      	/etc/kubernetes/manifests/kube-scheduler.yaml
+      	/etc/kubernetes/addons/skydns-rc.yaml
+      	/etc/kubernetes/addons/skydns-svc.yaml
+      )
+
+      privateIp=$(cat /etc/private_ipv4)
+
+      for i in "${files[@]}"
+      do
+      	cati=$(cat $i)
+      	echo "${cati//\$private_ipv4/$privateIp}" > $i
+      done
