@@ -84,9 +84,7 @@ write_files:
   - path: "/etc/instance.env"
     permissions: "0755"
     content: |
-      PRIVATE_IPV4=$private_ipv4
-      private_ipv4=$private_ipv4
-      ROLE=${INSTANCE_ROLE}
+      ${INSTANCE_ENV_FILE_TEMPLATE_CONTENT}
 
   - path: "/etc/kubernetes/manifests/kube-apiserver.yaml"
     permissions: "0755"
@@ -129,29 +127,3 @@ write_files:
     encoding: "gzip+base64"
     content: |
       ${KUBE_SKYDNS_SVC_TEMPLATE_CONTENT}
-
-  - path: "/etc/private_ipv4_replacer.sh"
-    permissions: "0755"
-    content: |
-      #! /bin/bash
-      set -o errexit
-
-      files=(
-      	/etc/kubernetes.env
-      	/etc/instance.env
-      	/etc/kubernetes/manifests/kube-apiserver.yaml
-      	/etc/kubernetes/manifests/kube-controller-manager.yaml
-      	/etc/kubernetes/manifests/kube-podmaster.yaml
-      	/etc/kubernetes/manifests/kube-proxy.yaml
-      	/etc/kubernetes/manifests/kube-scheduler.yaml
-      	/etc/kubernetes/addons/skydns-rc.yaml
-      	/etc/kubernetes/addons/skydns-svc.yaml
-      )
-
-      privateIp=$(cat /etc/private_ipv4)
-
-      for i in "${files[@]}"
-      do
-      	cati=$(cat $i)
-      	echo "${cati//\$private_ipv4/$privateIp}" > $i
-      done
