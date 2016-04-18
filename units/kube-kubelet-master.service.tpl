@@ -7,14 +7,15 @@
 
         [Service]
         # set env vars properly
-        EnvironmentFile=/etc/kubernetes.env
         EnvironmentFile=/etc/instance.env
+        EnvironmentFile=/etc/kubernetes.env
 
         #  systemd supports a simple notification protocol that allows daemons to make
         #  systemd aware that they are done initializing
         # Type=notify
 
         ExecStartPre=/usr/bin/mkdir -p /etc/kubernetes/manifests
+        ExecStartPre=/usr/bin/mkdir -p /srv/kubernetes/manifests
         ExecStart=/opt/bin/kubelet $KUBE_KUBELET_MASTER_OPTS
 
         # These settings set both soft and hard limits of various resources for executed
@@ -57,4 +58,3 @@
         [Install]
         # allows this unit to be enabled via systemctl enable
         WantedBy=multi-user.target
-
