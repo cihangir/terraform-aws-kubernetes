@@ -23,42 +23,6 @@ coreos:
     - name: fleet.service
       command: start
 
-    - name: docker.service
-      command: start
-      drop-ins:
-        - name: 40-flannel.conf
-          content: |
-            [Unit]
-            Requires=flanneld.service
-            After=flanneld.service
-
-    - name: install-kube.service
-      command: start
-      content: |
-        [Unit]
-        Description=Install Kubelet
-        [Service]
-        Type=oneshot
-        RemainAfterExit=yes
-        ExecStart=/usr/bin/bash -c '/usr/bin/mkdir -p /opt/bin && \
-                                    /usr/bin/wget -N -O /opt/bin/kubelet https://storage.googleapis.com/kubernetes-release/release/v${KUBERNETES_VERSION}/bin/linux/amd64/kubelet && \
-                                    /usr/bin/wget -N -O /opt/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v${KUBERNETES_VERSION}/bin/linux/amd64/kubectl'
-
-    - name: replace_private_ipv4.service
-      command: start
-      content: |
-        [Unit]
-        Description=Replace private_ipv4
-        [Service]
-        Type=oneshot
-        RemainAfterExit=yes
-        ExecStart=/etc/private_ipv4_replacer.sh
-
-    - name: kubelet.service
-      command: start
-      content: |
-${KUBE_KUBELET_MASTER_TEMPLATE_CONTENT}
-
     - name: flanneld.service
       command: start
       drop-ins:
@@ -69,6 +33,21 @@ ${KUBE_KUBELET_MASTER_TEMPLATE_CONTENT}
             [Service]
             ExecStartPre=-/usr/bin/etcdctl mk /coreos.com/network/config "{\"Network\":\"10.2.0.0/16\"}"
 
+    - name: docker.service
+      command: start
+      drop-ins:
+        - name: 40-flannel.conf
+          content: |
+            [Unit]
+            Requires=flanneld.service
+            After=flanneld.service
+
+    - name: replace_private_ipv4.service
+      command: start
+
+    - name: kubelet.service
+      command: start
+
 
 write_files:
   - path: "/etc/private_ipv4"
@@ -77,12 +56,14 @@ write_files:
       $private_ipv4
 
   - path: "/etc/kubernetes.env"
+    encoding: "gzip+base64"
     permissions: "0755"
     content: |
       ${KUBERNETES_ENV_FILE_TEMPLATE_CONTENT}
 
   - path: "/etc/instance.env"
     permissions: "0755"
+    encoding: "gzip+base64"
     content: |
       ${INSTANCE_ENV_FILE_TEMPLATE_CONTENT}
 

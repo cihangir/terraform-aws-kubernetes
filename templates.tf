@@ -71,14 +71,6 @@ resource "template_file" "skydns-svc" {
 #
 # Unit Templates
 #
-resource "template_file" "kube-kubelet-master-service" {
-  template = "${file("units/kube-kubelet-master.service.tpl")}"
-}
-
-resource "template_file" "kube-kubelet-node-service" {
-  template = "${file("units/kube-kubelet-node.service.tpl")}"
-}
-
 resource "template_file" "instance-env-file" {
   template = "${file("units/instance.env.tpl")}"
 
@@ -88,7 +80,7 @@ resource "template_file" "instance-env-file" {
 }
 
 resource "template_file" "kubernetes-env-file" {
-  template = "${file("units/kubernetes.env.tpl")}"
+  template = "${file("units/kubernetes.master.env.tpl")}"
 
   vars = {
     KUBERNETES_VERSION       = "${var.kubernetes_version}"
@@ -108,8 +100,6 @@ resource "template_file" "kube_master_cloud_init_file" {
     KUBERNETES_VERSION = "${var.kubernetes_version}"
     ETCD_ELB_DNS_NAME = "${module.aws_elb_etcd.aws_elb_elb_dns_name}"
 
-    KUBE_KUBELET_MASTER_TEMPLATE_CONTENT = "${template_file.kube-kubelet-master-service.rendered}"
-
     KUBE_APISERVER_TEMPLATE_CONTENT          = "${base64encode(gzip(template_file.kube-apiserver.rendered))}"
     KUBE_CONTROLLER_MANAGER_TEMPLATE_CONTENT = "${base64encode(gzip(template_file.kube-controller-manager.rendered))}"
     KUBE_PODMASTER_TEMPLATE_CONTENT          = "${base64encode(gzip(template_file.kube-podmaster.rendered))}"
@@ -118,7 +108,7 @@ resource "template_file" "kube_master_cloud_init_file" {
     KUBE_SKYDNS_RC_TEMPLATE_CONTENT          = "${base64encode(gzip(template_file.skydns-rc.rendered))}"
     KUBE_SKYDNS_SVC_TEMPLATE_CONTENT         = "${base64encode(gzip(template_file.skydns-svc.rendered))}"
 
-    KUBERNETES_ENV_FILE_TEMPLATE_CONTENT = "${template_file.kubernetes-env-file.rendered}"
-    INSTANCE_ENV_FILE_TEMPLATE_CONTENT   = "${template_file.instance-env-file.rendered}"
+    KUBERNETES_ENV_FILE_TEMPLATE_CONTENT = "${base64encode(gzip(template_file.kubernetes-env-file.rendered))}"
+    INSTANCE_ENV_FILE_TEMPLATE_CONTENT   = "${base64encode(gzip(template_file.instance-env-file.rendered))}"
   }
 }
