@@ -11,7 +11,7 @@ spec:
     command:
     - /hyperkube
     - scheduler
-    - --master=${KUBE_API_SERVER_ENDPOINT}
+    - --master=http://127.0.0.1:8080
     - --logtostderr=true
     livenessProbe:
       httpGet:
