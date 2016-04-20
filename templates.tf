@@ -76,6 +76,7 @@ resource "template_file" "instance-env-file" {
 
   vars = {
     INSTANCE_ROLE = "master"
+    ETCD_ELB_DNS_NAME = "${module.aws_elb_etcd.aws_elb_elb_dns_name}"
   }
 }
 
@@ -99,7 +100,7 @@ resource "template_file" "kube_master_cloud_init_file" {
   vars = {
     KUBERNETES_VERSION = "${var.kubernetes_version}"
     ETCD_ELB_DNS_NAME = "${module.aws_elb_etcd.aws_elb_elb_dns_name}"
-    
+
     KUBERNETES_PODS_IP_RANGE = "${var.kubernetes_pods_ip_range}"
 
     KUBE_APISERVER_TEMPLATE_CONTENT          = "${base64encode(gzip(template_file.kube-apiserver.rendered))}"
@@ -110,6 +111,22 @@ resource "template_file" "kube_master_cloud_init_file" {
     KUBE_SKYDNS_RC_TEMPLATE_CONTENT          = "${base64encode(gzip(template_file.skydns-rc.rendered))}"
     KUBE_SKYDNS_SVC_TEMPLATE_CONTENT         = "${base64encode(gzip(template_file.skydns-svc.rendered))}"
 
+    KUBERNETES_ENV_FILE_TEMPLATE_CONTENT = "${base64encode(gzip(template_file.kubernetes-env-file.rendered))}"
+    INSTANCE_ENV_FILE_TEMPLATE_CONTENT   = "${base64encode(gzip(template_file.instance-env-file.rendered))}"
+  }
+}
+
+#
+# Node Templates
+#
+resource "template_file" "kube_node_cloud_init_file" {
+  template = "${file("cloud_init_kube_nodes_coreos.yaml")}"
+
+  vars = {
+    KUBERNETES_VERSION = "${var.kubernetes_version}"
+    ETCD_ELB_DNS_NAME = "${module.aws_elb_etcd.aws_elb_elb_dns_name}"
+
+    KUBE_API_SERVER_ENDPOINT = "http://${module.aws_elb_kube_masters.aws_elb_elb_dns_name}:8080"
     KUBERNETES_ENV_FILE_TEMPLATE_CONTENT = "${base64encode(gzip(template_file.kubernetes-env-file.rendered))}"
     INSTANCE_ENV_FILE_TEMPLATE_CONTENT   = "${base64encode(gzip(template_file.instance-env-file.rendered))}"
   }
