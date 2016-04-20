@@ -48,6 +48,8 @@ coreos:
     - name: kubelet.service
       command: start
 
+    - name: create_kube_system_namespace.service
+      command: start
 
 write_files:
   - path: "/etc/private_ipv4"
