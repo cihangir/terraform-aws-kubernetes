@@ -43,6 +43,10 @@ variable "cluster_dns_endpoint" {
   default = "10.3.0.1"
 }
 
+
+variable "kubernetes_pods_ip_range" {
+    default = "10.2.0.0/16"
+}
 variable "kubernetes_version" {
   default = "1.2.2"
 }

@@ -99,6 +99,8 @@ resource "template_file" "kube_master_cloud_init_file" {
   vars = {
     KUBERNETES_VERSION = "${var.kubernetes_version}"
     ETCD_ELB_DNS_NAME = "${module.aws_elb_etcd.aws_elb_elb_dns_name}"
+    
+    KUBERNETES_PODS_IP_RANGE = "${var.kubernetes_pods_ip_range}"
 
     KUBE_APISERVER_TEMPLATE_CONTENT          = "${base64encode(gzip(template_file.kube-apiserver.rendered))}"
     KUBE_CONTROLLER_MANAGER_TEMPLATE_CONTENT = "${base64encode(gzip(template_file.kube-controller-manager.rendered))}"

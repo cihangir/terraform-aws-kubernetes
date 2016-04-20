@@ -31,7 +31,7 @@ coreos:
             [Unit]
             Requires=etcd2.service
             [Service]
-            ExecStartPre=-/usr/bin/etcdctl mk /coreos.com/network/config "{\"Network\":\"10.2.0.0/16\"}"
+            ExecStartPre=-/usr/bin/etcdctl mk /coreos.com/network/config '{ "Network": "${KUBERNETES_PODS_IP_RANGE}" }'
 
     - name: docker.service
       command: start
