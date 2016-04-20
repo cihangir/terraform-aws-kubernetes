@@ -36,7 +36,7 @@ variable "instance_type_etcd" {
 }
 
 variable "service_cluster_ip_range" {
-  default = "10.3.0.1/24"
+  default = "10.3.0.0/24"
 }
 
 variable "cluster_dns_endpoint" {
