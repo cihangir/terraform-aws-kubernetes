@@ -13,7 +13,7 @@ coreos:
 
   fleet:
     etcd-servers: http://127.0.0.1:2379
-    metadata: etcd=proxy,kubernetes=master
+    metadata: etcd=proxy,kubernetes=node
     public-ip: $private_ipv4
 
   units:
@@ -22,6 +22,14 @@ coreos:
 
     - name: fleet.service
       command: start
+
+    - name: flanneld.service
+      command: start
+      drop-ins:
+        - name: "40-ExecStartPre-symlink.conf"
+          content: |
+            [Service]
+            ExecStartPre=/usr/bin/ln -sf /etc/instance.env /run/flannel/options.env
 
     - name: docker.service
       command: start
@@ -32,74 +40,92 @@ coreos:
             Requires=flanneld.service
             After=flanneld.service
 
+    - name: replace_private_ipv4.service
+      command: start
+
     - name: kubelet.service
       command: start
-      content: |
-${KUBE_KUBELET_MASTER_TEMPLATE_CONTENT}
-
-    - name: flanneld.service
-      command: start
-      drop-ins:
-        - name: 50-network-config.conf
-          content: |
-            [Unit]
-            Requires=etcd2.service
-            [Service]
-            ExecStartPre=-/usr/bin/etcdctl mk /coreos.com/network/config "{\"Network\":\"10.2.0.0/16\"}"
-
 
 write_files:
+  - path: "/etc/private_ipv4"
+    permissions: "0755"
+    content: |
+      $private_ipv4
+
   - path: "/etc/kubernetes.env"
-    permissions: "0644"
     encoding: "gzip+base64"
+    permissions: "0755"
     content: |
       ${KUBERNETES_ENV_FILE_TEMPLATE_CONTENT}
 
   - path: "/etc/instance.env"
-    permissions: "0644"
+    permissions: "0755"
     encoding: "gzip+base64"
     content: |
       ${INSTANCE_ENV_FILE_TEMPLATE_CONTENT}
 
-  - path: "/etc/kubernetes/manifests/kube-apiserver.yaml"
-    permissions: "0644"
-    encoding: "gzip+base64"
-    content: |
-      ${KUBE_APISERVER_TEMPLATE_CONTENT}
-
-  - path: "/etc/kubernetes/manifests/kube-controller-manager.yaml"
-    permissions: "0644"
-    encoding: "gzip+base64"
-    content: |
-      ${KUBE_CONTROLLER_MANAGER_TEMPLATE_CONTENT}
-
-  - path: "/etc/kubernetes/manifests/kube-podmaster.yaml"
-    permissions: "0644"
-    encoding: "gzip+base64"
-    content: |
-      ${KUBE_PODMASTER_TEMPLATE_CONTENT}
-
   - path: "/etc/kubernetes/manifests/kube-proxy.yaml"
-    permissions: "0644"
-    encoding: "gzip+base64"
+    permissions: "0755"
     content: |
-      ${KUBE_PROXY_TEMPLATE_CONTENT}
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        name: kube-proxy
+        namespace: kube-system
+      spec:
+        hostNetwork: true
+        containers:
+        - name: kube-proxy
+          image: gcr.io/google_containers/hyperkube:v$${KUBERNETES_VERSION}
+          command:
+          - /hyperkube
+          - proxy
+          - --master=${KUBE_API_SERVER_ENDPOINT}
+          - --kubeconfig=/etc/kubernetes/worker-kubeconfig.yaml
+          - --proxy-mode=iptables
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - mountPath: /etc/ssl/certs
+              name: "ssl-certs"
+            - mountPath: /etc/kubernetes/worker-kubeconfig.yaml
+              name: "kubeconfig"
+              readOnly: true
+            - mountPath: /etc/kubernetes/ssl
+              name: "etc-kube-ssl"
+              readOnly: true
+        volumes:
+          - name: "ssl-certs"
+            hostPath:
+              path: "/usr/share/ca-certificates"
+          - name: "kubeconfig"
+            hostPath:
+              path: "/etc/kubernetes/worker-kubeconfig.yaml"
+          - name: "etc-kube-ssl"
+            hostPath:
+              path: "/etc/kubernetes/ssl"
 
-  - path: "/etc/kubernetes/manifests/kube-scheduler.yaml"
-    permissions: "0644"
-    encoding: "gzip+base64"
+
+  - path: "/etc/kubernetes/manifests/worker-kubeconfig.yaml"
+    permissions: "0755"
     content: |
-      ${KUBE_SCHEDULER_TEMPLATE_CONTENT}
-
-  - path: "/etc/kubernetes/addons/skydns-rc.yaml"
-    permissions: "0644"
-    encoding: "gzip+base64"
-    content: |
-      ${KUBE_SKYDNS_RC_TEMPLATE_CONTENT}
-
-  - path: "/etc/kubernetes/addons/skydns-svc.yaml"
-    permissions: "0644"
-    encoding: "gzip+base64"
-    content: |
-      ${KUBE_SKYDNS_SVC_TEMPLATE_CONTENT}
-
+      apiVersion: v1
+      clusters:
+        -
+          cluster:
+            certificate-authority: /etc/kubernetes/ssl/ca.pem
+          name: local
+      contexts:
+        -
+          context:
+            cluster: local
+            user: kubelet
+          name: kubelet-context
+      current-context: kubelet-context
+      kind: Config
+      users:
+        -
+          name: kubelet
+          user:
+            client-certificate: /etc/kubernetes/ssl/worker.pem
+            client-key: /etc/kubernetes/ssl/worker-key.pem
