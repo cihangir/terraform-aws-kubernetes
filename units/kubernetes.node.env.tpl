@@ -12,6 +12,7 @@ KUBE_KUBELET_OPTS="--api_servers=${KUBE_API_SERVER_ENDPOINT} \
   --kubeconfig=/etc/kubernetes/worker-kubeconfig.yaml \
   --tls-cert-file=/etc/kubernetes/ssl/worker.pem \
   --tls-private-key-file=/etc/kubernetes/ssl/worker-key.pem \
-  --v=2 \
+  --v=3 \
   --cadvisor-port=0 \
+  --logtostderr=true \
   --cloud-provider=aws"

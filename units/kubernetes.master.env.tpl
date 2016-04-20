@@ -11,4 +11,5 @@ KUBE_KUBELET_OPTS="--api_servers=http://127.0.0.1:8080 \
   --cluster_domain=${CLUSTER_DOMAIN} \
   --cadvisor-port=0 \
   --logtostderr=true \
-  --v=2"
+  --cloud-provider=aws \
+  --v=3"
