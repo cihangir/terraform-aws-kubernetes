@@ -3,7 +3,7 @@
 ###############################################################
 module "aws_elb_kube_masters" {
   source                      = "github.com/cihangir/terraform-aws//elb"
-  name                        = "${var.name}"
+  name                        = "${var.name}-masters"
   aws_vpc_id                  = "${module.aws_vpc.aws_vpc_vpc_id}"
   aws_subnet_subnet_ids       = "${module.aws_vpc.aws_subnet_subnet_ids}"
   aws_elb_instance_port       = 8080
