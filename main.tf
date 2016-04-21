@@ -63,6 +63,10 @@ variable "kubernetes_skydns_replica_count" {
   default = "1"
 }
 
+variable "kubernetes_flannel_backend" {
+    default = "vxlan"
+}
+
 ###############################################################
 ############## master vpc to create resources in ##############
 ###############################################################
@@ -79,4 +83,3 @@ module "aws_sg" {
   name       = "${var.name}"
   aws_vpc_id = "${module.aws_vpc.aws_vpc_vpc_id}"
 }
-
