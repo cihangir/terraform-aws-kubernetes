@@ -80,7 +80,7 @@ resource "template_file" "instance-env-file" {
   }
 }
 
-resource "template_file" "kubernetes-env-file" {
+resource "template_file" "kubernetes-master-env-file" {
   template = "${file("units/kubernetes.master.env.tpl")}"
 
   vars = {
@@ -88,6 +88,22 @@ resource "template_file" "kubernetes-env-file" {
     KUBE_API_SERVER_ENDPOINT = "http://${module.aws_elb_kube_masters.aws_elb_elb_dns_name}:8080"
     CLUSTER_DNS_ENDPOINT     = "${var.cluster_dns_endpoint}"
     CLUSTER_DOMAIN           = "${var.cluster_domain}"
+  }
+}
+
+
+resource "template_file" "kubernetes-node-env-file" {
+  template = "${file("units/kubernetes.node.env.tpl")}"
+
+  vars = {
+    KUBERNETES_VERSION       = "${var.kubernetes_version}"
+    KUBE_API_SERVER_ENDPOINT = "http://${module.aws_elb_kube_masters.aws_elb_elb_dns_name}:8080"
+    CLUSTER_DNS_ENDPOINT     = "${var.cluster_dns_endpoint}"
+    CLUSTER_DOMAIN           = "${var.cluster_domain}"
+
+    ETCD_ELB_DNS_NAME = "${module.aws_elb_etcd.aws_elb_elb_dns_name}"
+    KUBERNETES_PODS_IP_RANGE = "${var.kubernetes_pods_ip_range}"
+    KUBERNETES_FLANNEL_BACKEND = "${var.kubernetes_flannel_backend}"
   }
 }
 
@@ -111,7 +127,7 @@ resource "template_file" "kube_master_cloud_init_file" {
     KUBE_SKYDNS_RC_TEMPLATE_CONTENT          = "${base64encode(gzip(template_file.skydns-rc.rendered))}"
     KUBE_SKYDNS_SVC_TEMPLATE_CONTENT         = "${base64encode(gzip(template_file.skydns-svc.rendered))}"
 
-    KUBERNETES_ENV_FILE_TEMPLATE_CONTENT = "${base64encode(gzip(template_file.kubernetes-env-file.rendered))}"
+    KUBERNETES_ENV_FILE_TEMPLATE_CONTENT = "${base64encode(gzip(template_file.kubernetes-master-env-file.rendered))}"
     INSTANCE_ENV_FILE_TEMPLATE_CONTENT   = "${base64encode(gzip(template_file.instance-env-file.rendered))}"
   }
 }
@@ -124,10 +140,12 @@ resource "template_file" "kube_node_cloud_init_file" {
 
   vars = {
     KUBERNETES_VERSION = "${var.kubernetes_version}"
+    KUBE_API_SERVER_ENDPOINT = "http://${module.aws_elb_kube_masters.aws_elb_elb_dns_name}:8080"
+
+    CLUSTER_DNS_ENDPOINT = "${var.cluster_dns_endpoint}"
     ETCD_ELB_DNS_NAME = "${module.aws_elb_etcd.aws_elb_elb_dns_name}"
 
-    KUBE_API_SERVER_ENDPOINT = "http://${module.aws_elb_kube_masters.aws_elb_elb_dns_name}:8080"
-    KUBERNETES_ENV_FILE_TEMPLATE_CONTENT = "${base64encode(gzip(template_file.kubernetes-env-file.rendered))}"
+    KUBERNETES_ENV_FILE_TEMPLATE_CONTENT = "${base64encode(gzip(template_file.kubernetes-node-env-file.rendered))}"
     INSTANCE_ENV_FILE_TEMPLATE_CONTENT   = "${base64encode(gzip(template_file.instance-env-file.rendered))}"
   }
 }
