@@ -16,3 +16,8 @@ KUBE_KUBELET_OPTS="--api_servers=${KUBE_API_SERVER_ENDPOINT} \
   --cadvisor-port=0 \
   --logtostderr=true \
   --cloud-provider=aws"
+
+FLANNEL_ETCDCTL_OPTS="-C ${ETCD_ELB_DNS_NAME}"
+FLANNEL_ETCD_PREFIX="/coreos.com/network/config"
+FLANNEL_NETWORK_CONFIG='{"Network":"${KUBERNETES_PODS_IP_RANGE}","Backend":{"Type":"${KUBERNETES_FLANNEL_BACKEND}"}}'
+FLANNEL_OPTS="--ip-masq --etcd-endpoints=${ETCD_ELB_DNS_NAME}"
