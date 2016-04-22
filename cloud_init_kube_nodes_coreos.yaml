@@ -13,7 +13,7 @@ coreos:
 
   fleet:
     etcd-servers: http://127.0.0.1:2379
-    metadata: etcd=proxy,kubernetes=node
+    metadata: etcd=proxy,kubernetes=node,region=${REGION},kubernetes_version=${KUBERNETES_VERSION}
     public-ip: $private_ipv4
 
   units:
