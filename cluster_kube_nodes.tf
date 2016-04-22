@@ -7,11 +7,11 @@ module "aws_elb_kube_nodes" {
   aws_vpc_id            = "${module.aws_vpc.aws_vpc_vpc_id}"
   aws_subnet_subnet_ids = "${module.aws_vpc.aws_subnet_subnet_ids}"
 
-  aws_elb_instance_port       = 8080
+  aws_elb_instance_port       = 10255
   aws_elb_instance_protocol   = "tcp"
-  aws_elb_port                = 8080
+  aws_elb_port                = 10255
   aws_elb_protocol            = "tcp"
-  aws_elb_health_check_target = "HTTP:8080/healthz"
+  aws_elb_health_check_target = "HTTP:10255/healthz"
 }
 
 
