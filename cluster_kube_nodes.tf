@@ -22,7 +22,7 @@ module "aws_asg_kube_nodes" {
   key_name              = "${module.aws_vpc.aws_key_name}"
   load_balancer_names   = "${module.aws_elb_kube_nodes.aws_elb_elb_name}"
   instance_type         = "${var.instance_type_master}"
-  ami_id                = "ami-d77cf2bb"
+  ami_id                = "${var.ami_id}"
   desired_cluster_size  = "${var.master_desired_cluster_size}"
 
   rendered_cloud_init = "${template_file.kube_node_cloud_init_file.rendered}"

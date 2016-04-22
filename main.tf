@@ -19,6 +19,10 @@ variable "etcd_discovery_url_file" {
   default = "etcd_discovery_url.txt"
 }
 
+variable "ami_id" {
+  default = "ami-cd0886a1"
+}
+
 variable "master_desired_cluster_size" {
   default = "2"
 }
