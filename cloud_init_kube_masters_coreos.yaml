@@ -13,7 +13,7 @@ coreos:
 
   fleet:
     etcd-servers: http://127.0.0.1:2379
-    metadata: etcd=proxy,kubernetes=master
+    metadata: etcd=proxy,kubernetes=master,region=${REGION},kubernetes_version=${KUBERNETES_VERSION}
     public-ip: $private_ipv4
 
   units:
@@ -31,7 +31,7 @@ coreos:
             [Unit]
             Requires=etcd2.service
             [Service]
-            ExecStartPre=-/usr/bin/etcdctl mk /coreos.com/network/config '{ "Network": "${KUBERNETES_PODS_IP_RANGE}" }'
+            ExecStartPre=-/usr/bin/etcdctl mk /coreos.com/network/config '{"Network":"${KUBERNETES_PODS_IP_RANGE}","Backend":{"Type":"${KUBERNETES_FLANNEL_BACKEND}"}}'
 
     - name: docker.service
       command: start

@@ -114,10 +114,12 @@ resource "template_file" "kube_master_cloud_init_file" {
   template = "${file("cloud_init_kube_masters_coreos.yaml")}"
 
   vars = {
+    REGION = "${var.region}"
     KUBERNETES_VERSION = "${var.kubernetes_version}"
     ETCD_ELB_DNS_NAME = "${module.aws_elb_etcd.aws_elb_elb_dns_name}"
 
     KUBERNETES_PODS_IP_RANGE = "${var.kubernetes_pods_ip_range}"
+    KUBERNETES_FLANNEL_BACKEND = "${var.kubernetes_flannel_backend}"
 
     KUBE_APISERVER_TEMPLATE_CONTENT          = "${base64encode(gzip(template_file.kube-apiserver.rendered))}"
     KUBE_CONTROLLER_MANAGER_TEMPLATE_CONTENT = "${base64encode(gzip(template_file.kube-controller-manager.rendered))}"
@@ -139,8 +141,12 @@ resource "template_file" "kube_node_cloud_init_file" {
   template = "${file("cloud_init_kube_nodes_coreos.yaml")}"
 
   vars = {
+    REGION = "${var.region}"
     KUBERNETES_VERSION = "${var.kubernetes_version}"
     KUBE_API_SERVER_ENDPOINT = "http://${module.aws_elb_kube_masters.aws_elb_elb_dns_name}:8080"
+
+    KUBERNETES_PODS_IP_RANGE = "${var.kubernetes_pods_ip_range}"
+    KUBERNETES_FLANNEL_BACKEND = "${var.kubernetes_flannel_backend}"
 
     CLUSTER_DNS_ENDPOINT = "${var.cluster_dns_endpoint}"
     ETCD_ELB_DNS_NAME = "${module.aws_elb_etcd.aws_elb_elb_dns_name}"
