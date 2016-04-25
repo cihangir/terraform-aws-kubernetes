@@ -42,6 +42,12 @@ coreos:
             Requires=flanneld.service
             After=flanneld.service
 
+        - name: 50-restart.conf
+          content: |
+            [Service]
+            Restart=always
+            RestartSec=10
+
     - name: replace_private_ipv4.service
       command: start
 
