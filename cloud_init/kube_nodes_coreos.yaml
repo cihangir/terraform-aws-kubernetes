@@ -44,7 +44,7 @@ coreos:
             [Service]
             Restart=always
             RestartSec=10
-            
+
     - name: replace_private_ipv4.service
       command: start
 
@@ -81,7 +81,7 @@ write_files:
         hostNetwork: true
         containers:
         - name: kube-proxy
-          image: gcr.io/google_containers/hyperkube:v$${KUBERNETES_VERSION}
+          image: gcr.io/google_containers/hyperkube:v${KUBERNETES_VERSION}
           command:
           - /hyperkube
           - proxy
