@@ -49,7 +49,7 @@ resource "template_file" "read_etcd_discovery_url_file" {
 resource "template_file" "coreos_etcd_cloud_init" {
   depends_on = ["template_file.read_etcd_discovery_url_file"]
 
-  template = "${file("cloud_init_etcd_coreos.yaml")}"
+  template = "${file("cloud_init/etcd_coreos.yaml")}"
 
   vars {
     discovery_url = "${template_file.read_etcd_discovery_url_file.rendered}"

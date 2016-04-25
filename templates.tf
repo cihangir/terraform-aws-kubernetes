@@ -111,7 +111,7 @@ resource "template_file" "kubernetes-node-env-file" {
 # Main Templates
 #
 resource "template_file" "kube_master_cloud_init_file" {
-  template = "${file("cloud_init_kube_masters_coreos.yaml")}"
+  template = "${file("cloud_init/kube_masters_coreos.yaml")}"
 
   vars = {
     REGION = "${var.region}"
@@ -138,7 +138,7 @@ resource "template_file" "kube_master_cloud_init_file" {
 # Node Templates
 #
 resource "template_file" "kube_node_cloud_init_file" {
-  template = "${file("cloud_init_kube_nodes_coreos.yaml")}"
+  template = "${file("cloud_init/kube_nodes_coreos.yaml")}"
 
   vars = {
     REGION = "${var.region}"
