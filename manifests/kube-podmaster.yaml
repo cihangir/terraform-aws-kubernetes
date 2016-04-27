@@ -10,7 +10,7 @@ spec:
     image: gcr.io/google_containers/podmaster:1.1
     command:
     - /podmaster
-    - --etcd-servers=${ETCD_SERVERS}
+    - --etcd-servers=http://localhost:2379
     - --key=scheduler
     - --whoami=$private_ipv4
     - --source-file=/src/manifests/kube-scheduler.yaml

@@ -14,7 +14,7 @@ spec:
     - --bind-address=127.0.0.1
     - --advertise-address=$private_ipv4
     - --insecure-bind-address=0.0.0.0
-    - --etcd-servers=${ETCD_SERVERS}
+    - --etcd-servers=http://localhost:2379
     - --allow-privileged=true
     - --service-cluster-ip-range=${SERVICE_CLUSTER_IP_RANGE}
     - --secure-port=443
