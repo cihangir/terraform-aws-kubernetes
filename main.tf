@@ -44,7 +44,7 @@ variable "service_cluster_ip_range" {
 }
 
 variable "cluster_dns_endpoint" {
-  default = "10.3.0.1"
+  default = "10.3.0.254"
 }
 
 
