@@ -24,7 +24,7 @@ variable "ami_id" {
 }
 
 variable "master_desired_cluster_size" {
-  default = "2"
+  default = "3"
 }
 
 variable "instance_type_master" {
