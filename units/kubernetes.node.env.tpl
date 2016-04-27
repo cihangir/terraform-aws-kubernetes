@@ -9,7 +9,6 @@ KUBE_KUBELET_OPTS="--api_servers=${KUBE_API_SERVER_ENDPOINT} \
   --hostname-override=$private_ipv4 \
   --cluster-dns=${CLUSTER_DNS_ENDPOINT} \
   --cluster-domain=${CLUSTER_DOMAIN} \
-  --kubeconfig=/etc/kubernetes/worker-kubeconfig.yaml \
   --tls-cert-file=/etc/kubernetes/ssl/worker.pem \
   --tls-private-key-file=/etc/kubernetes/ssl/worker-key.pem \
   --v=3 \
