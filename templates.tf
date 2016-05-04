@@ -56,6 +56,7 @@ resource "template_file" "skydns-rc" {
     DNS_REPLICAS   = "${var.kubernetes_skydns_replica_count}"
     DNS_DOMAIN     = "${var.cluster_domain}"                  # same value with CLUSTER_DOMAIN, just here to keep compatibility with upstream
     CLUSTER_DOMAIN = "${var.cluster_domain}"
+    KUBE_API_SERVER_ENDPOINT = "http://${module.aws_elb_kube_masters.aws_elb_elb_dns_name}:8080"
   }
 }
 
