@@ -86,7 +86,6 @@ write_files:
           - /hyperkube
           - proxy
           - --master=${KUBE_API_SERVER_ENDPOINT}
-          - --kubeconfig=/etc/kubernetes/worker-kubeconfig.yaml
           - --proxy-mode=iptables
           securityContext:
             privileged: true
