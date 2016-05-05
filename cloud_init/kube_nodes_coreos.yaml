@@ -102,9 +102,6 @@ write_files:
           - name: "ssl-certs"
             hostPath:
               path: "/usr/share/ca-certificates"
-          - name: "kubeconfig"
-            hostPath:
-              path: "/etc/kubernetes/worker-kubeconfig.yaml"
           - name: "etc-kube-ssl"
             hostPath:
               path: "/etc/kubernetes/ssl"
