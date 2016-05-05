@@ -26,5 +26,5 @@ module "aws_asg_kube_nodes" {
   desired_cluster_size  = "${var.master_desired_cluster_size}"
 
   rendered_cloud_init = "${template_file.kube_node_cloud_init_file.rendered}"
-  security_groups     = "${module.aws_elb_kube_nodes.aws_elb_elb_aws_security_group_sec_group_id},${module.aws_sg.aws_security_group_sec_group_id}"
+  security_groups     = "${module.aws_sg.aws_security_group_sec_group_id}"
 }
