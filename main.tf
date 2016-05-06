@@ -71,6 +71,10 @@ variable "kubernetes_flannel_backend" {
     default = "vxlan"
 }
 
+variable "aws_security_group_prefix" {
+  default = "sec-group-"
+}
+
 ###############################################################
 ############## master vpc to create resources in ##############
 ###############################################################
@@ -79,11 +83,17 @@ module "aws_vpc" {
   name   = "${var.name}"
 }
 
-###############################################################
-##### master security group that allows all communication #####
-###############################################################
-module "aws_sg" {
-  source     = "github.com/cihangir/terraform-aws//secgroups"
-  name       = "${var.name}"
-  aws_vpc_id = "${module.aws_vpc.aws_vpc_vpc_id}"
+resource "aws_security_group" "sec_group" {
+  name        = "${var.aws_security_group_prefix}main-${var.name}"
+  description = "Main Security Group for ${var.name}"
+  vpc_id      = "${module.aws_vpc.aws_vpc_vpc_id}"
+
+  tags {
+    Name    = "KubernetesCluster"
+  }
+}
+
+module "aws_secrules_cluster" {
+  source = "github.com/cihangir/terraform-aws//secgrouprules"
+  sec_group_id = "${aws_security_group.sec_group.id}"
 }
