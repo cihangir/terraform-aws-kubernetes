@@ -29,7 +29,7 @@ module "aws_asg_etcd" {
   instance_type         = "${var.instance_type_master}"
   ami_id                = "ami-d75bd4bb"
   rendered_cloud_init   = "${template_file.coreos_etcd_cloud_init.rendered}"
-  security_groups       = "${module.aws_elb_etcd.aws_elb_elb_aws_security_group_sec_group_id},${module.aws_sg.aws_security_group_sec_group_id}"
+  security_groups       = "${aws_security_group.sec_group.id}"
   desired_cluster_size  = "${var.master_desired_cluster_size}"
   min_cluster_size      = 3
   max_cluster_size      = 5
@@ -65,6 +65,6 @@ resource "aws_security_group_rule" "allow_all_ingress_within_vpc_to_etcd_elb" {
   from_port                = 0
   to_port                  = 0
   protocol                 = "-1"
-  source_security_group_id = "${module.aws_sg.aws_security_group_sec_group_id}"
+  source_security_group_id = "${aws_security_group.sec_group.id}"
   security_group_id        = "${module.aws_elb_etcd.aws_elb_elb_aws_security_group_sec_group_id}"
 }

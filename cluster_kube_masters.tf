@@ -25,7 +25,7 @@ module "aws_asg_kube_masters" {
   desired_cluster_size  = "${var.master_desired_cluster_size}"
 
   rendered_cloud_init = "${template_file.kube_master_cloud_init_file.rendered}"
-  security_groups     = "${module.aws_sg.aws_security_group_sec_group_id}"
+  security_groups     = "${aws_security_group.sec_group.id}"
 }
 
 # Allow all incoming communication to master elb from vpc
@@ -34,6 +34,6 @@ resource "aws_security_group_rule" "allow_all_ingress_within_vpc_to_master_elb" 
   from_port                = 0
   to_port                  = 0
   protocol                 = "-1"
-  source_security_group_id = "${module.aws_sg.aws_security_group_sec_group_id}"
+  source_security_group_id = "${aws_security_group.sec_group.id}"
   security_group_id        = "${module.aws_elb_kube_masters.aws_elb_elb_aws_security_group_sec_group_id}"
 }
